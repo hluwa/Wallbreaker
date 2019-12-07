@@ -1,0 +1,17 @@
+{
+  "name": "wallbreaker-agent",
+  "version": "1.0.0",
+  "description": "Wallbreaker Agent",
+  "private": true,
+  "main": "src/index.ts",
+  "scripts": {
+    "prepare": "npm run build",
+    "build": "frida-compile src/index.ts -o _agent.js",
+    "watch": "frida-compile src/index.ts -o _agent.js -w"
+  },
+  "devDependencies": {
+    "@types/frida-gum": "^14.1.0",
+    "@types/node": "^12.7.2",
+    "frida-compile": "^9.0.8"
+  }
+}
