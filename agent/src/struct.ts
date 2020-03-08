@@ -43,7 +43,6 @@ export class ClassWrapper {
                         }
                         __this.staticMethods[property].push(wrapper);
                     } else if (overload.type == 1) {
-                        send(property);
                         if (property == '$new') {
                             __this.constructors.push(wrapper);
                         } else {
