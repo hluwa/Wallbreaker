@@ -17,7 +17,7 @@ rpc.exports = {
     classUse: function (name: string) {
         let clazz = use(name);
         if (clazz) {
-            return print(clazz);
+            return JSON.stringify(clazz);
         } else {
             return "Unable to use <" + name + ">."
         }

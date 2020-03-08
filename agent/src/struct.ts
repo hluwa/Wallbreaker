@@ -13,6 +13,7 @@ export class ClassWrapper {
     private static cache: any = {};
     public name: string;
     public super: string;
+    public constructors: Array<any> = [];
     public staticMethods: any = {};
     public instanceMethods: any = {};
     public staticFields: any = {};
@@ -33,6 +34,7 @@ export class ClassWrapper {
 
             if (value.hasOwnProperty("argumentTypes")) {
                 value.methodName = property;
+
                 value.overloads.forEach(function (overload: Method) {
                     if (overload.type == 2) {
                         if (!(__this.staticMethods.hasOwnProperty(property))) {
@@ -40,10 +42,16 @@ export class ClassWrapper {
                         }
                         __this.staticMethods[property].push(overload);
                     } else {
-                        if (!(__this.instanceMethods.hasOwnProperty(property))) {
-                            __this.instanceMethods[property] = [];
+                        if (property == '$init') {
+                            __this.constructors.push(overload);
+                        } else if (property == '$new') {
+                            // pass
+                        } else {
+                            if (!(__this.instanceMethods.hasOwnProperty(property))) {
+                                __this.instanceMethods[property] = [];
+                            }
+                            __this.instanceMethods[property].push(overload);
                         }
-                        __this.instanceMethods[property].push(overload);
                     }
                 });
             } else if (value.hasOwnProperty("fieldReturnType")) {
