@@ -36,21 +36,27 @@ export class ClassWrapper {
                 value.methodName = property;
 
                 value.overloads.forEach(function (overload: Method) {
+                    const wrapper = new MethodWrapper(__this, overload);
                     if (overload.type == 2) {
                         if (!(__this.staticMethods.hasOwnProperty(property))) {
                             __this.staticMethods[property] = [];
                         }
-                        __this.staticMethods[property].push(overload);
+                        __this.staticMethods[property].push(wrapper);
+                    } else if (overload.type == 1) {
+                        send(property);
+                        if (property == '$new') {
+                            __this.constructors.push(wrapper);
+                        } else {
+                            // pass
+                        }
                     } else {
                         if (property == '$init') {
-                            __this.constructors.push(overload);
-                        } else if (property == '$new') {
                             // pass
                         } else {
                             if (!(__this.instanceMethods.hasOwnProperty(property))) {
                                 __this.instanceMethods[property] = [];
                             }
-                            __this.instanceMethods[property].push(overload);
+                            __this.instanceMethods[property].push(wrapper);
                         }
                     }
                 });
@@ -76,5 +82,27 @@ export class ClassWrapper {
             ClassWrapper.cache[name] = new ClassWrapper(handle);
         }
         return ClassWrapper.cache[name];
+    }
+}
+
+
+export class MethodWrapper {
+    public name: string;
+    public arguments: Array<any> = [];
+    public retType: any;
+    public isStatic: Boolean;
+    public isConstructor: Boolean;
+    public ownClass: string;
+
+    constructor(own: ClassWrapper, overload: Method) {
+        const _this = this;
+        this.ownClass = own.name;
+        this.name = overload.methodName;
+        overload.argumentTypes.forEach(function (t) {
+            _this.arguments.push(t.className);
+        });
+        this.retType = overload.returnType.className;
+        this.isStatic = overload.type == 2;
+        this.isConstructor = overload.type == 1;
     }
 }
