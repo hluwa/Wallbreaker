@@ -40,7 +40,10 @@ class Connection:
 
 
 def create_connection(p_name=None, p_id=None, device=None, spawn=False):
-    device = frida.get_usb_device() if device is None else device
+    try:
+        device = frida.get_usb_device() if device is None else device
+    except:
+        device = frida.get_remote_device() if device is None else device
     assert device, "Unable to connect android device"
 
     if p_name:

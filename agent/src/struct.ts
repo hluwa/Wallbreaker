@@ -62,8 +62,22 @@ export class ClassWrapper {
             } else if (value.hasOwnProperty("fieldReturnType")) {
                 if (value.fieldType == 1) {
                     __this.staticFields[property] = value;
+                    __this.staticFields[property].toJSON = function(){
+                        return {
+                            name: property,
+                            isStatic: this.fieldType == 1,
+                            type: this.fieldReturnType.className
+                        }
+                    }
                 } else {
                     __this.instanceFields[property] = value;
+                    __this.instanceFields[property].toJSON = function(){
+                        return {
+                            name: property,
+                            isStatic: this.fieldType == 1,
+                            type: this.fieldReturnType.className
+                        }
+                    }
                 }
             }
         });

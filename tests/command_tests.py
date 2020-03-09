@@ -8,7 +8,7 @@ from wallbreaker.connection import create_connection
 
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(asctime)s <%(funcName)s> - %(message)s")
 
-test_process = 'com.genymotion.superuser'
+test_process = 'org.lineageos.trebuchet'
 TestLogger = logging.getLogger("UnitTest")
 
 
