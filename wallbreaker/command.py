@@ -74,11 +74,10 @@ class CommandAgent(Agent):
         return self._rpc.class_match(pattern)
 
     def class_use(self, name):
-        return self._rpc.class_use(name)
+        return json.loads(self._rpc.class_use(name))
 
     def class_dump(self, name, petty_print=False, short_name=True):
         target = self.class_use(name)
-        target = json.loads(target)
         result = ""
         if petty_print:
             click.secho("")

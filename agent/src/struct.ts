@@ -5,9 +5,15 @@
 * */
 
 import Wrapper = Java.Wrapper;
-import MethodDispatcher = Java.MethodDispatcher;
-import Field = Java.Field;
 import Method = Java.Method;
+
+function hasOwnProperty(obj: any, name: string) {
+    try {
+        return obj.hasOwnProperty(name) || name in obj;
+    } catch (e) {
+        return obj.hasOwnProperty(name)
+    }
+}
 
 export class ClassWrapper {
     private static cache: any = {};
@@ -26,15 +32,20 @@ export class ClassWrapper {
 
         // extract methods and fields
         let __this = this;
-        Object.getOwnPropertyNames(handle.$classWrapper.prototype).forEach(function (property) {
+
+        if(hasOwnProperty(handle, "$init")){
+            handle.$init.overloads.forEach(function(overload){
+                __this.constructors.push(new MethodWrapper(__this, overload));
+            });
+        }
+
+        let pt = hasOwnProperty(handle, "$classWrapper") ? handle.$classWrapper.prototype : handle;
+        Object.getOwnPropertyNames(pt).forEach(function (property) {
             let value = handle[property];
             if (!value) {
                 return;
             }
-
-            if (value.hasOwnProperty("argumentTypes")) {
-                value.methodName = property;
-
+            if (hasOwnProperty(value, "argumentTypes")) {
                 value.overloads.forEach(function (overload: Method) {
                     const wrapper = new MethodWrapper(__this, overload);
                     if (overload.type == 2) {
@@ -43,11 +54,7 @@ export class ClassWrapper {
                         }
                         __this.staticMethods[property].push(wrapper);
                     } else if (overload.type == 1) {
-                        if (property == '$new') {
-                            __this.constructors.push(wrapper);
-                        } else {
-                            // pass
-                        }
+                        // pass
                     } else {
                         if (property == '$init') {
                             // pass
@@ -59,10 +66,10 @@ export class ClassWrapper {
                         }
                     }
                 });
-            } else if (value.hasOwnProperty("fieldReturnType")) {
+            } else if (hasOwnProperty(value, "fieldReturnType")) {
                 if (value.fieldType == 1) {
                     __this.staticFields[property] = value;
-                    __this.staticFields[property].toJSON = function(){
+                    __this.staticFields[property].toJSON = function () {
                         return {
                             name: property,
                             isStatic: this.fieldType == 1,
@@ -71,7 +78,7 @@ export class ClassWrapper {
                     }
                 } else {
                     __this.instanceFields[property] = value;
-                    __this.instanceFields[property].toJSON = function(){
+                    __this.instanceFields[property].toJSON = function () {
                         return {
                             name: property,
                             isStatic: this.fieldType == 1,

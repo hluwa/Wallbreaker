@@ -8,7 +8,7 @@ from wallbreaker.connection import create_connection
 
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(asctime)s <%(funcName)s> - %(message)s")
 
-test_process = 'org.lineageos.trebuchet'
+test_process = 'com.android.phone'
 TestLogger = logging.getLogger("UnitTest")
 
 
@@ -26,8 +26,16 @@ def test_class_use():
     assert connection.connected()
     agent = CommandAgent(connection)
     assert agent.attached()
-    class_desc = agent.class_use("android.content.ContentProvider")
-    assert "Unable to use" not in class_desc
+    class_struct = agent.class_use("android.content.ContentProvider")
+    assert "Unable to use" not in class_struct
+    assert class_struct["constructors"]
+    assert class_struct["instanceMethods"]
+    assert class_struct["staticMethods"]
+    assert class_struct["staticFields"]
+    assert class_struct["instanceFields"]
+    assert class_struct["implements"]
+    assert class_struct["name"]
+    assert class_struct["super"]
 
 
 tests = [test_class_match, test_class_use]
