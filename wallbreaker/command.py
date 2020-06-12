@@ -3,6 +3,7 @@
 # CreatedTime: 2019/12/7 22:59
 import json
 import logging
+import os
 
 import click
 
@@ -12,7 +13,9 @@ AgentLogger = logging.getLogger("Agent")
 
 
 class Agent:
-    def __init__(self, connection=None, script_file="../agent/_agent.js"):
+    def __init__(self, connection=None, script_file=None):
+        if script_file is None:
+            script_file = os.path.join(os.path.dirname(__file__), "../agent/_agent.js")
         self._connection = connection
         self._script_file = script_file
         self._script = None
