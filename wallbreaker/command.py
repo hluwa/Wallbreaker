@@ -103,31 +103,38 @@ class CommandAgent(Agent):
         def handle_fields(fields):
             append = ""
             for field in fields:
-                if short_name:
-                    t = DvmDescConverter(field['type']).short_name()
-                else:
-                    t = DvmDescConverter(field['type']).to_java()
-                append += '\t'
-                if pretty_print:
-                    click.secho("\t", nl=False)
-                append += "static " if field['isStatic'] else ""
-                if pretty_print:
-                    click.secho("static " if field['isStatic'] else "", fg='blue', nl=False)
-                append += t + " "
-                if pretty_print:
-                    click.secho(t + " ", fg='blue', nl=False)
+                try:
+                    if short_name:
+                        t = DvmDescConverter(field['type']).short_name()
+                    else:
+                        t = DvmDescConverter(field['type']).to_java()
+                    append += '\t'
+                    if pretty_print:
+                        click.secho("\t", nl=False)
+                    append += "static " if field['isStatic'] else ""
+                    if pretty_print:
+                        click.secho("static " if field['isStatic'] else "", fg='blue', nl=False)
+                    append += t + " "
+                    if pretty_print:
+                        click.secho(t + " ", fg='blue', nl=False)
 
-                value = None
-                if can_preview:
-                    value = self.object_get_field(handle, field['name'])
-                append += '{};{}\n'.format(field["name"], " => {}".format(value) if value is not None else "")
-                if pretty_print:
-                    click.secho(field['name'], fg='red', nl=False)
-                    click.secho(";", nl=False)
-                    if value is not None:
-                        click.secho(" => ", nl=False)
-                        click.secho(value, fg='bright_cyan', nl=False)
-                    click.secho("")
+                    value = None
+                    if can_preview:
+                        value = self.object_get_field(handle, field['name'])
+                    append += '{};{}\n'.format(field["name"], " => {}".format(value) if value is not None else "")
+                    if pretty_print:
+                        click.secho(field['name'], fg='red', nl=False)
+                        click.secho(";", nl=False)
+                        if value is not None:
+                            click.secho(" => ", nl=False)
+                            click.secho(value, fg='bright_cyan', nl=False)
+                        click.secho("")
+                except:
+                    append += "<unknown error>\n"
+                    if pretty_print:
+                        click.secho("<unknown error>", fg="red", nl=False)
+                        click.secho()
+
             append += '\n'
             if pretty_print: click.secho("\n", nl=False)
             return append
@@ -148,34 +155,40 @@ class CommandAgent(Agent):
         def handle_methods(methods):
             append = ""
             for method in methods:
-                if short_name:
-                    args_s = [DvmDescConverter(arg).short_name() for arg in method['arguments']]
-                else:
-                    args_s = [DvmDescConverter(arg).to_java() for arg in method['arguments']]
-                args = ", ".join(args_s)
-                append += '\t'
-                if pretty_print:
-                    click.secho("\t", nl=False)
-                append += "static " if method['isStatic'] else ""
-                if pretty_print:
-                    click.secho("static " if method['isStatic'] else "", fg='blue', nl=False)
-                retType = method['retType']
-                if short_name: retType = DvmDescConverter(retType).short_name()
-                retType = retType + " " if not method['isConstructor'] else ""
-                append += retType
-                if pretty_print:
-                    click.secho(retType, fg='blue', nl=False)
-                append += method['name'] + '('
-                if pretty_print:
-                    click.secho(method['name'], fg='red', nl=False)
-                    click.secho("(", nl=False)
-                append += args + ");\n"
-                if pretty_print:
-                    for index in range(len(args_s)):
-                        click.secho(args_s[index], fg='green', nl=False)
-                        if index is not len(args_s) - 1:
-                            click.secho(", ", nl=False)
-                    click.secho(");\n", nl=False)
+                try:
+                    if short_name:
+                        args_s = [DvmDescConverter(arg).short_name() for arg in method['arguments']]
+                    else:
+                        args_s = [DvmDescConverter(arg).to_java() for arg in method['arguments']]
+                    args = ", ".join(args_s)
+                    append += '\t'
+                    if pretty_print:
+                        click.secho("\t", nl=False)
+                    append += "static " if method['isStatic'] else ""
+                    if pretty_print:
+                        click.secho("static " if method['isStatic'] else "", fg='blue', nl=False)
+                    retType = method['retType']
+                    if short_name: retType = DvmDescConverter(retType).short_name()
+                    retType = retType + " " if not method['isConstructor'] else ""
+                    append += retType
+                    if pretty_print:
+                        click.secho(retType, fg='blue', nl=False)
+                    append += method['name'] + '('
+                    if pretty_print:
+                        click.secho(method['name'], fg='red', nl=False)
+                        click.secho("(", nl=False)
+                    append += args + ");\n"
+                    if pretty_print:
+                        for index in range(len(args_s)):
+                            click.secho(args_s[index], fg='green', nl=False)
+                            if index is not len(args_s) - 1:
+                                click.secho(", ", nl=False)
+                        click.secho(");\n", nl=False)
+                except:
+                    append += "<unknown error>({})\n".format(method)
+                    if pretty_print:
+                        click.secho("<unknown error>({})".format(method), fg="bright_red", nl=False)
+                        click.secho()
             return append
 
         constructors = target['constructors']

@@ -22,7 +22,7 @@ export class ClassWrapper {
 
 
     private constructor(handle: Wrapper | null) {
-        if(!handle){
+        if (!handle) {
             this.name = "NONE";
             this.super = "NONE";
             return
