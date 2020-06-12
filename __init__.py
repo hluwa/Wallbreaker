@@ -58,7 +58,7 @@ class WallBreaker(Plugin):
             else:
                 target_name = arg
 
-        self.plugin_agent.class_dump(target_name, petty_print=True, short_name=short_name)
+        self.plugin_agent.class_dump(target_name, pretty_print=True, short_name=short_name)
 
 
 namespace = 'wallbreaker'

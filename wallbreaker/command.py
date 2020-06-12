@@ -79,23 +79,23 @@ class CommandAgent(Agent):
     def class_use(self, name):
         return json.loads(self._rpc.class_use(name))
 
-    def class_dump(self, name, handle=None, petty_print=False, short_name=True):
+    def class_dump(self, name, handle=None, pretty_print=False, short_name=True):
         target = self.class_use(name)
         can_preview = handle is not None
         result = ""
-        if petty_print:
+        if pretty_print:
             click.secho("")
         class_name = str(target['name'])
         if '.' in class_name:
             pkg = class_name[:class_name.rindex('.')]
             class_name = class_name[class_name.rindex('.') + 1:]
             result += "package {};\n\n".format(pkg)
-            if petty_print:
+            if pretty_print:
                 click.secho("package ", fg="blue", nl=False)
                 click.secho(pkg + "\n\n", nl=False)
 
         result += "class {}".format(class_name) + " {\n\n"
-        if petty_print:
+        if pretty_print:
             click.secho("class ", fg="blue", nl=False)
             click.secho(class_name, nl=False)
             click.secho(" {\n\n", fg='red', nl=False)
@@ -108,39 +108,39 @@ class CommandAgent(Agent):
                 else:
                     t = DvmDescConverter(field['type']).to_java()
                 append += '\t'
-                if petty_print:
+                if pretty_print:
                     click.secho("\t", nl=False)
                 append += "static " if field['isStatic'] else ""
-                if petty_print:
+                if pretty_print:
                     click.secho("static " if field['isStatic'] else "", fg='blue', nl=False)
                 append += t + " "
-                if petty_print:
+                if pretty_print:
                     click.secho(t + " ", fg='blue', nl=False)
 
                 value = None
                 if can_preview:
                     value = self.object_get_field(handle, field['name'])
                 append += '{};{}\n'.format(field["name"], " => {}".format(value) if value is not None else "")
-                if petty_print:
+                if pretty_print:
                     click.secho(field['name'], fg='red', nl=False)
                     click.secho(";", nl=False)
                     if value is not None:
                         click.secho(" => ", nl=False)
                         click.secho(value, fg='bright_cyan')
             append += '\n'
-            if petty_print: click.secho("\n", nl=False)
+            if pretty_print: click.secho("\n", nl=False)
             return append
 
         static_fields = target['staticFields']
         instance_fields = target['instanceFields']
 
         result += "\t/* static fields */\n"
-        if petty_print:
+        if pretty_print:
             click.secho("\t/* static fields */", fg="bright_black")
         result += handle_fields(static_fields.values())
 
         result += "\t/* instance fields */\n"
-        if petty_print:
+        if pretty_print:
             click.secho("\t/* instance fields */", fg="bright_black")
         result += handle_fields(instance_fields.values())
 
@@ -153,23 +153,23 @@ class CommandAgent(Agent):
                     args_s = [DvmDescConverter(arg).to_java() for arg in method['arguments']]
                 args = ", ".join(args_s)
                 append += '\t'
-                if petty_print:
+                if pretty_print:
                     click.secho("\t", nl=False)
                 append += "static " if method['isStatic'] else ""
-                if petty_print:
+                if pretty_print:
                     click.secho("static " if method['isStatic'] else "", fg='blue', nl=False)
                 retType = method['retType']
                 if short_name: retType = DvmDescConverter(retType).short_name()
                 retType = retType + " " if not method['isConstructor'] else ""
                 append += retType
-                if petty_print:
+                if pretty_print:
                     click.secho(retType, fg='blue', nl=False)
                 append += method['name'] + '('
-                if petty_print:
+                if pretty_print:
                     click.secho(method['name'], fg='red', nl=False)
                     click.secho("(", nl=False)
                 append += args + ");\n"
-                if petty_print:
+                if pretty_print:
                     for index in range(len(args_s)):
                         click.secho(args_s[index], fg='green', nl=False)
                         if index is not len(args_s) - 1:
@@ -182,27 +182,27 @@ class CommandAgent(Agent):
         static_methods = target['staticMethods']
 
         result += "\t/* constructor methods */\n"
-        if petty_print:
+        if pretty_print:
             click.secho("\t/* constructor methods */", fg="bright_black")
         result += handle_methods(constructors)
         result += "\n"
-        if petty_print: click.secho("")
+        if pretty_print: click.secho("")
 
         result += "\t/* static methods */\n"
-        if petty_print:
+        if pretty_print:
             click.secho("\t/* static methods */", fg="bright_black")
         for name in static_methods:
             result += handle_methods(static_methods[name])
         result += "\n"
-        if petty_print: click.secho("")
+        if pretty_print: click.secho("")
 
         result += "\t/* instance methods */\n"
-        if petty_print:
+        if pretty_print:
             click.secho("\t/* instance methods */", fg="bright_black")
         for name in instance_methods:
             result += handle_methods(instance_methods[name])
         result += "\n}\n"
-        if petty_print: click.secho("\n}\n", fg='red', nl=False)
+        if pretty_print: click.secho("\n}\n", fg='red', nl=False)
         return result
 
     def object_search(self, clazz, stop=False):
