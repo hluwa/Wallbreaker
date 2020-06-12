@@ -14,6 +14,15 @@ function getRealClassName(object: Wrapper) {
     return Java.use("java.lang.Class").getName.apply(objClass)
 }
 
+function getHandle(object: Wrapper) {
+    if (hasOwnProperty(object, "$handle")) {
+        return object.$handle;
+    }
+    if (hasOwnProperty(object, "$h")) {
+        return object.$h
+    }
+    return null
+}
 
 function objectToStr(object: Wrapper) {
     return Java.use("java.lang.Object").toString.apply(object);
@@ -26,7 +35,7 @@ export const searchHandles = (clazz: string, stop: boolean = false) => {
                 onComplete: function () {
                 },
                 onMatch: function (instance) {
-                    var handle = instance.$handle;
+                    var handle = getHandle(instance);
                     result[handle] = objectToStr(instance);
                     if (stop) {
                         return "stop"
@@ -77,8 +86,9 @@ export const getObjectFieldValue = (handle: string, field: string) => {
                 value = "null"
             }
 
-            if (hasOwnProperty(value, "$handle")) {
-                value = "[" + value.$handle + "]: " + objectToStr(value).split("\n").join(" \\n ");
+            let handle = getHandle(value);
+            if (handle != null) {
+                value = "[" + handle + "]: " + objectToStr(value).split("\n").join(" \\n ");
             }
         } else {
             value = "null"
