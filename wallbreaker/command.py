@@ -126,7 +126,8 @@ class CommandAgent(Agent):
                     click.secho(";", nl=False)
                     if value is not None:
                         click.secho(" => ", nl=False)
-                        click.secho(value, fg='bright_cyan')
+                        click.secho(value, fg='bright_cyan', nl=False)
+                    click.secho("")
             append += '\n'
             if pretty_print: click.secho("\n", nl=False)
             return append
