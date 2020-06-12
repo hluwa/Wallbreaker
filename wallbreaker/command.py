@@ -123,7 +123,14 @@ class CommandAgent(Agent):
         static_fields = target['staticFields']
         instance_fields = target['instanceFields']
 
+        result += "\t/* static fields */"
+        if petty_print:
+            click.secho("\t/* static fields */", fg="bright_black")
         result += handle_fields(static_fields.values())
+
+        result += "\t/* instance fields */"
+        if petty_print:
+            click.secho("\t/* instance fields */", fg="bright_black")
         result += handle_fields(instance_fields.values())
 
         def handle_methods(methods):
@@ -163,19 +170,26 @@ class CommandAgent(Agent):
         instance_methods = target['instanceMethods']
         static_methods = target['staticMethods']
 
+        result += "\t/* constructor methods */"
+        if petty_print:
+            click.secho("\t/* constructor methods */", fg="bright_black")
         result += handle_methods(constructors)
         result += "\n"
         if petty_print: click.secho("")
 
+        result += "\t/* static methods */"
+        if petty_print:
+            click.secho("\t/* static methods */", fg="bright_black")
         for name in static_methods:
             result += handle_methods(static_methods[name])
-
         result += "\n"
         if petty_print: click.secho("")
 
+        result += "\t/* instance methods */"
+        if petty_print:
+            click.secho("\t/* instance methods */", fg="bright_black")
         for name in instance_methods:
             result += handle_methods(instance_methods[name])
-
         result += "\n}\n"
         if petty_print: click.secho("\n}\n", fg='red', nl=False)
         return result
