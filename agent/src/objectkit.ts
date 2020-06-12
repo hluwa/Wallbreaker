@@ -88,6 +88,7 @@ export const getObjectFieldValue = (handle: string, field: string) => {
 
             const handle = getHandle(value);
             if (handle != null) {
+                handleCache[handle] = value;
                 value = "[" + handle + "]: " + objectToStr(value).split("\n").join(" \\n ");
             }
         } else {
