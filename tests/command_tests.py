@@ -38,7 +38,20 @@ def test_class_use():
     assert class_struct["super"]
 
 
-tests = [test_class_match, test_class_use]
+def test_object_search():
+    connection = create_connection(p_name=test_process)
+    assert connection.connected()
+    agent = CommandAgent(connection)
+    assert agent.attached()
+    objects = agent.object_search("com.android.phone.PhoneGlobals")
+    assert len(objects) == 1
+
+
+tests = [
+    test_class_match,
+    test_class_use,
+    test_object_search,
+]
 
 if __name__ == '__main__':
     for test in tests:
