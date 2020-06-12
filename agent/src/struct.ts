@@ -6,17 +6,11 @@
 
 import Wrapper = Java.Wrapper;
 import Method = Java.Method;
-
-function hasOwnProperty(obj: any, name: string) {
-    try {
-        return obj.hasOwnProperty(name) || name in obj;
-    } catch (e) {
-        return obj.hasOwnProperty(name)
-    }
-}
+import {hasOwnProperty} from "./utils";
 
 export class ClassWrapper {
     private static cache: any = {};
+    public static NONE: ClassWrapper = new ClassWrapper(null);
     public name: string;
     public super: string;
     public constructors: Array<any> = [];
@@ -26,15 +20,21 @@ export class ClassWrapper {
     public instanceFields: any = {};
     public implements: Array<string> = [];
 
-    private constructor(handle: Wrapper) {
+
+    private constructor(handle: Wrapper | null) {
+        if(!handle){
+            this.name = "NONE";
+            this.super = "NONE";
+            return
+        }
         this.name = handle.$className;
         this.super = handle.class.getSuperclass().getName();
 
         // extract methods and fields
         let __this = this;
 
-        if(hasOwnProperty(handle, "$init")){
-            handle.$init.overloads.forEach(function(overload){
+        if (hasOwnProperty(handle, "$init")) {
+            handle.$init.overloads.forEach(function (overload) {
                 __this.constructors.push(new MethodWrapper(__this, overload));
             });
         }

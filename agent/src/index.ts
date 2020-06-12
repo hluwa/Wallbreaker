@@ -7,12 +7,7 @@ import {match, print, use} from "./classkit";
 
 rpc.exports = {
     classMatch: function (name: string) {
-        let result: Array<string> = [];
-        let wrappers = match(name);
-        wrappers.forEach(function (wrapper) {
-            result.push(wrapper)
-        });
-        return result
+        return match(name);
     },
     classUse: function (name: string) {
         let clazz = use(name);
