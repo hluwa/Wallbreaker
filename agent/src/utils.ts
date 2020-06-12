@@ -16,7 +16,7 @@ export function getOwnProperty(obj: any, name: string) {
     if (!hasOwnProperty(obj, name)) {
         return null;
     }
-    var result = null;
+    let result = null;
     try {
         result = obj[name];
         if (result) {

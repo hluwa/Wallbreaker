@@ -31,7 +31,7 @@ export class ClassWrapper {
         this.super = handle.class.getSuperclass().getName();
 
         // extract methods and fields
-        let __this = this;
+        const __this = this;
 
         if (hasOwnProperty(handle, "$init")) {
             handle.$init.overloads.forEach(function (overload) {
@@ -39,9 +39,9 @@ export class ClassWrapper {
             });
         }
 
-        let pt = hasOwnProperty(handle, "$classWrapper") ? handle.$classWrapper.prototype : handle;
+        const pt = hasOwnProperty(handle, "$classWrapper") ? handle.$classWrapper.prototype : handle;
         Object.getOwnPropertyNames(pt).forEach(function (property) {
-            let value = handle[property];
+            const value = handle[property];
             if (!value) {
                 return;
             }
@@ -90,14 +90,14 @@ export class ClassWrapper {
         });
 
         // get implemented interfaces
-        let _this = this;
+        const _this = this;
         handle.class.getInterfaces().forEach(function (interfaceClass: Wrapper) {
             _this.implements.push(interfaceClass.getName());
         });
     }
 
     public static byWrapper(handle: Wrapper) {
-        let name = handle.class.getName();
+        const name = handle.class.getName();
         if (!(name in ClassWrapper.cache)) {
             ClassWrapper.cache[name] = new ClassWrapper(handle);
         }

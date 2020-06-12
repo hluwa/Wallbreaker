@@ -11,7 +11,7 @@ rpc.exports = {
         return match(name);
     },
     classUse: function (name: string) {
-        let clazz = use(name);
+        const clazz = use(name);
         return JSON.stringify(clazz);
     },
     objectSearch: function (clazz: string, stop: boolean) {

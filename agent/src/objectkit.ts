@@ -7,10 +7,10 @@
 import Wrapper = Java.Wrapper;
 import {getOwnProperty, hasOwnProperty} from "./utils";
 
-var handleCache: any = {};
+let handleCache: any = {};
 
 function getRealClassName(object: Wrapper) {
-    let objClass = Java.use("java.lang.Object").getClass.apply(object);
+    const objClass = Java.use("java.lang.Object").getClass.apply(object);
     return Java.use("java.lang.Class").getName.apply(objClass)
 }
 
@@ -29,13 +29,13 @@ function objectToStr(object: Wrapper) {
 }
 
 export const searchHandles = (clazz: string, stop: boolean = false) => {
-    var result: any = {};
+    let result: any = {};
     Java.perform(function () {
             Java.choose(clazz, {
                 onComplete: function () {
                 },
                 onMatch: function (instance) {
-                    var handle = getHandle(instance);
+                    const handle = getHandle(instance);
                     result[handle] = objectToStr(instance);
                     if (stop) {
                         return "stop"
@@ -48,12 +48,12 @@ export const searchHandles = (clazz: string, stop: boolean = false) => {
 };
 
 export const getRealClassNameByHandle = (handle: string) => {
-    var result: string | null = null;
+    let result: string | null = null;
     Java.perform(function () {
         try {
 
-            let obj = Java.use("java.lang.Object");
-            let jObject = Java.cast(ptr(handle), obj);
+            const obj = Java.use("java.lang.Object");
+            const jObject = Java.cast(ptr(handle), obj);
             result = getRealClassName(jObject);
         } catch (e) {
 
@@ -63,18 +63,18 @@ export const getRealClassNameByHandle = (handle: string) => {
 };
 
 export const getObjectFieldValue = (handle: string, field: string) => {
-    var result: string = "null";
+    let result: string = "null";
     Java.perform(function () {
         if (!hasOwnProperty(handleCache, handle)) {
-            let origClassName = getRealClassNameByHandle(handle);
+            const origClassName = getRealClassNameByHandle(handle);
             if (!origClassName) {
                 return
             }
             handleCache[handle] = Java.cast(ptr(handle), Java.use(origClassName));
         }
-        let origObject = handleCache[handle];
+        const origObject = handleCache[handle];
 
-        var value = getOwnProperty(origObject, field);
+        let value = getOwnProperty(origObject, field);
         if (value == null) {
             value = getOwnProperty(origObject, "_" + field);
         }
@@ -86,7 +86,7 @@ export const getObjectFieldValue = (handle: string, field: string) => {
                 value = "null"
             }
 
-            let handle = getHandle(value);
+            const handle = getHandle(value);
             if (handle != null) {
                 value = "[" + handle + "]: " + objectToStr(value).split("\n").join(" \\n ");
             }
