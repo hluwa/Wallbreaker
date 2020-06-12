@@ -79,8 +79,9 @@ class CommandAgent(Agent):
     def class_use(self, name):
         return json.loads(self._rpc.class_use(name))
 
-    def class_dump(self, name, petty_print=False, short_name=True):
+    def class_dump(self, name, handle=None, petty_print=False, short_name=True):
         target = self.class_use(name)
+        can_preview = handle is not None
         result = ""
         if petty_print:
             click.secho("")
@@ -115,10 +116,17 @@ class CommandAgent(Agent):
                 append += t + " "
                 if petty_print:
                     click.secho(t + " ", fg='blue', nl=False)
-                append += field['name'] + ';\n'
+
+                value = None
+                if can_preview:
+                    value = self.object_get_field(handle, field['name'])
+                append += '{};{}\n'.format(field["name"], " => {}".format(value) if value is not None else "")
                 if petty_print:
                     click.secho(field['name'], fg='red', nl=False)
-                    click.secho(";\n", nl=False)
+                    click.secho(";", nl=False)
+                    if value is not None:
+                        click.secho(" => ", nl=False)
+                        click.secho(value, fg='bright_cyan')
             append += '\n'
             if petty_print: click.secho("\n", nl=False)
             return append
@@ -126,12 +134,12 @@ class CommandAgent(Agent):
         static_fields = target['staticFields']
         instance_fields = target['instanceFields']
 
-        result += "\t/* static fields */"
+        result += "\t/* static fields */\n"
         if petty_print:
             click.secho("\t/* static fields */", fg="bright_black")
         result += handle_fields(static_fields.values())
 
-        result += "\t/* instance fields */"
+        result += "\t/* instance fields */\n"
         if petty_print:
             click.secho("\t/* instance fields */", fg="bright_black")
         result += handle_fields(instance_fields.values())
@@ -173,14 +181,14 @@ class CommandAgent(Agent):
         instance_methods = target['instanceMethods']
         static_methods = target['staticMethods']
 
-        result += "\t/* constructor methods */"
+        result += "\t/* constructor methods */\n"
         if petty_print:
             click.secho("\t/* constructor methods */", fg="bright_black")
         result += handle_methods(constructors)
         result += "\n"
         if petty_print: click.secho("")
 
-        result += "\t/* static methods */"
+        result += "\t/* static methods */\n"
         if petty_print:
             click.secho("\t/* static methods */", fg="bright_black")
         for name in static_methods:
@@ -188,7 +196,7 @@ class CommandAgent(Agent):
         result += "\n"
         if petty_print: click.secho("")
 
-        result += "\t/* instance methods */"
+        result += "\t/* instance methods */\n"
         if petty_print:
             click.secho("\t/* instance methods */", fg="bright_black")
         for name in instance_methods:
@@ -196,3 +204,15 @@ class CommandAgent(Agent):
         result += "\n}\n"
         if petty_print: click.secho("\n}\n", fg='red', nl=False)
         return result
+
+    def object_search(self, clazz, stop=False):
+        return self._rpc.object_search(clazz, stop)
+
+    def object_dump(self, handle, **kwargs):
+        return self.class_dump(self.object_get_classname(handle), handle=handle, **kwargs)
+
+    def object_get_classname(self, handle):
+        return self._rpc.object_get_class(handle)
+
+    def object_get_field(self, handle, field):
+        return self._rpc.object_get_field(handle, field)

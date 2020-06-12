@@ -3,7 +3,8 @@
 * HomePage: https://github.com/hluwa
 * CreateTime: 2019/12/4
 * */
-import {match, print, use} from "./classkit";
+import {match, use} from "./classkit";
+import {getObjectFieldValue, getRealClassNameByHandle, searchHandles} from "./objectkit";
 
 rpc.exports = {
     classMatch: function (name: string) {
@@ -11,10 +12,16 @@ rpc.exports = {
     },
     classUse: function (name: string) {
         let clazz = use(name);
-        if (clazz) {
-            return JSON.stringify(clazz);
-        } else {
-            return "Unable to use <" + name + ">."
-        }
+        return JSON.stringify(clazz);
+    },
+    objectSearch: function (clazz: string, stop: boolean) {
+        return searchHandles(clazz, stop);
+    },
+    objectGetClass: function (handle: string) {
+        return getRealClassNameByHandle(handle);
+    },
+    objectGetField: function (handle: string, field: string) {
+        return getObjectFieldValue(handle, field);
     }
+
 };
