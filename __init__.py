@@ -38,10 +38,20 @@ class WallBreaker(Plugin):
                     'flags': ['--fullname'],
                     'exec': self.classdump
                 },
-                'objectdump':{
+                'classsearch': {
+                    'meta': 'search class by pattern',
+                    'flags': [],
+                    'exec': self.classsearch
+                },
+                'objectdump': {
                     'meta': 'quick view an object internal',
                     'flags': ['--fullname'],
                     'exec': self.objectdump
+                },
+                'objectsearch': {
+                    'meta': 'search instance in heap',
+                    'flags': [],
+                    'exec': self.objectsearch
                 }
             }
         }
@@ -65,6 +75,11 @@ class WallBreaker(Plugin):
 
         self.plugin_agent.class_dump(target_name, pretty_print=True, short_name=short_name)
 
+    def classsearch(self, args=None):
+        pattern = args[0]
+        instances = self.plugin_agent.class_match(pattern)
+        print("\n".join(instances))
+
     def objectdump(self, args=None):
         """
         """
@@ -76,6 +91,12 @@ class WallBreaker(Plugin):
             else:
                 handle = arg
         self.plugin_agent.object_dump(handle, pretty_print=True, short_name=short_name)
+
+    def objectsearch(self, args=None):
+        clsname = args[0]
+        instances = self.plugin_agent.object_search(clsname, stop=False)
+        for handle in instances:
+            print("[{}]: {}".format(handle, instances[handle]))
 
 
 namespace = 'wallbreaker'
