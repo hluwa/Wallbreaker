@@ -223,6 +223,7 @@ class CommandAgent(Agent):
         return self._rpc.object_search(clazz, stop)
 
     def object_dump(self, handle, **kwargs):
+        handle = str(handle)
         return self.class_dump(self.object_get_classname(handle), handle=handle, **kwargs)
 
     def object_get_classname(self, handle):

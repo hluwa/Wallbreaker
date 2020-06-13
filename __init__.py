@@ -37,6 +37,11 @@ class WallBreaker(Plugin):
                     'meta': 'quick view a class struct',
                     'flags': ['--fullname'],
                     'exec': self.classdump
+                },
+                'objectdump':{
+                    'meta': 'quick view an object internal',
+                    'flags': ['--fullname'],
+                    'exec': self.objectdump
                 }
             }
         }
@@ -59,6 +64,18 @@ class WallBreaker(Plugin):
                 target_name = arg
 
         self.plugin_agent.class_dump(target_name, pretty_print=True, short_name=short_name)
+
+    def objectdump(self, args=None):
+        """
+        """
+        short_name = True
+        handle = ""
+        for arg in args:
+            if arg == "--fullname":
+                short_name = False
+            else:
+                handle = arg
+        self.plugin_agent.object_dump(handle, pretty_print=True, short_name=short_name)
 
 
 namespace = 'wallbreaker'
