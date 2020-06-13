@@ -188,7 +188,7 @@ class CommandAgent(Agent):
                     append += "<unknown error>({})\n".format(method)
                     if pretty_print:
                         click.secho("<unknown error>({})".format(method), fg="bright_red", nl=False)
-                        click.secho()
+                        click.secho("")
             return append
 
         constructors = target['constructors']
