@@ -5,23 +5,15 @@
 * */
 
 import Wrapper = Java.Wrapper;
-import {getOwnProperty, hasOwnProperty} from "./utils";
+import {getHandle, getOwnProperty, hasOwnProperty} from "./utils";
+import {ClassWrapper} from "./struct";
+import {use} from "./classkit";
 
 let handleCache: any = {};
 
 function getRealClassName(object: Wrapper) {
     const objClass = Java.use("java.lang.Object").getClass.apply(object);
     return Java.use("java.lang.Class").getName.apply(objClass)
-}
-
-function getHandle(object: Wrapper) {
-    if (hasOwnProperty(object, "$handle")) {
-        return object.$handle;
-    }
-    if (hasOwnProperty(object, "$h")) {
-        return object.$h
-    }
-    return null
 }
 
 function objectToStr(object: Wrapper) {
@@ -66,11 +58,16 @@ export const getObjectFieldValue = (handle: string, field: string) => {
     let result: string = "null";
     Java.perform(function () {
         if (!hasOwnProperty(handleCache, handle)) {
-            const origClassName = getRealClassNameByHandle(handle);
-            if (!origClassName) {
-                return
+            if (handle.startsWith("0x")) {
+                const origClassName = getRealClassNameByHandle(handle);
+                if (!origClassName) {
+                    return
+                }
+                handleCache[handle] = Java.cast(ptr(handle), Java.use(origClassName));
+            } else {
+                handleCache[handle] = Java.use(handle)
             }
-            handleCache[handle] = Java.cast(ptr(handle), Java.use(origClassName));
+
         }
         const origObject = handleCache[handle];
 
@@ -78,7 +75,6 @@ export const getObjectFieldValue = (handle: string, field: string) => {
         if (value == null) {
             value = getOwnProperty(origObject, "_" + field);
         }
-
         if (value != null) {
             value = value.value;
 

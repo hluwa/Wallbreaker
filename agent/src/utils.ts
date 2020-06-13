@@ -4,6 +4,8 @@
 * CreatedTime: 2020/6/13 00:30
 * */
 
+import Wrapper = Java.Wrapper;
+
 export function hasOwnProperty(obj: any, name: string) {
     try {
         return obj.hasOwnProperty(name) || name in obj;
@@ -33,4 +35,14 @@ export function getOwnProperty(obj: any, name: string) {
     } catch (e) {
     }
     return result
+}
+
+export  function getHandle(object: Wrapper) {
+    if (hasOwnProperty(object, "$handle")) {
+        return object.$handle;
+    }
+    if (hasOwnProperty(object, "$h")) {
+        return object.$h
+    }
+    return null
 }

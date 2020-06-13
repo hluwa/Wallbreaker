@@ -81,7 +81,6 @@ class CommandAgent(Agent):
 
     def class_dump(self, name, handle=None, pretty_print=False, short_name=True):
         target = self.class_use(name)
-        can_preview = handle is not None
         result = ""
         if pretty_print:
             click.secho("")
@@ -100,7 +99,12 @@ class CommandAgent(Agent):
             click.secho(class_name, nl=False)
             click.secho(" {\n\n", fg='red', nl=False)
 
-        def handle_fields(fields):
+        def handle_fields(fields, can_preview=None):
+            _handle = handle
+            if can_preview is None:
+                can_preview = _handle is not None
+            elif can_preview and _handle is None:
+                _handle = target['name']
             append = ""
             for field in fields:
                 try:
@@ -120,7 +124,7 @@ class CommandAgent(Agent):
 
                     value = None
                     if can_preview:
-                        value = self.object_get_field(handle, field['name'])
+                        value = self.object_get_field(_handle, field['name'])
                     append += '{};{}\n'.format(field["name"], " => {}".format(value) if value is not None else "")
                     if pretty_print:
                         click.secho(field['name'], fg='red', nl=False)
@@ -145,7 +149,7 @@ class CommandAgent(Agent):
         result += "\t/* static fields */\n"
         if pretty_print:
             click.secho("\t/* static fields */", fg="bright_black")
-        result += handle_fields(static_fields.values())
+        result += handle_fields(static_fields.values(), can_preview=True)
 
         result += "\t/* instance fields */\n"
         if pretty_print:
