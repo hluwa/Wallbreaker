@@ -31,7 +31,7 @@ Now, you can run it in [objection](https://github.com/sensepost/objection) or in
     
 #### demo video
 
-[![asciicast](https://asciinema.org/a/PZoQ6BoEPwKKwPX8d2BGgAXrr.svg)](https://asciinema.org/a/PZoQ6BoEPwKKwPX8d2BGgAXrr)
+[![asciicast](https://asciinema.org/a/XZf8yLWJylCKJfcaYzcKlNbIy.svg)](https://asciinema.org/a/XZf8yLWJylCKJfcaYzcKlNbIy)
 
 ### ipython
 
