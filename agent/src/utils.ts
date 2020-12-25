@@ -38,11 +38,23 @@ export function getOwnProperty(obj: any, name: string) {
 }
 
 export  function getHandle(object: Wrapper) {
-    if (hasOwnProperty(object, "$handle")) {
-        return object.$handle;
+    if(hasOwnProperty(object,'$handle')){
+        if(object.$handle != undefined){
+            return object.$handle
+        }
     }
-    if (hasOwnProperty(object, "$h")) {
-        return object.$h
+    if(hasOwnProperty(object,'$h')){
+        if(object.$h != undefined){
+            return object.$h
+        }
     }
     return null
+    //return object.hashCode()
+}
+
+export function isStatic(obj : any){
+    
+    var modifiers = obj.getModifiers()
+    return  ((modifiers & 0x8) != 0)
+
 }

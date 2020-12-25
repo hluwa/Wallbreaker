@@ -6,7 +6,7 @@
 
 import Wrapper = Java.Wrapper;
 import Method = Java.Method;
-import {hasOwnProperty} from "./utils";
+import {hasOwnProperty,isStatic} from "./utils";
 
 export class ClassWrapper {
     private static cache: any = {};
@@ -22,6 +22,7 @@ export class ClassWrapper {
 
 
     private constructor(handle: Wrapper | null) {
+        // console.log('come into consturtor')
         if (!handle) {
             this.name = "NONE";
             this.super = "NONE";
@@ -32,63 +33,59 @@ export class ClassWrapper {
 
         // extract methods and fields
         const __this = this;
+        
 
-        if (hasOwnProperty(handle, "$init")) {
-            handle.$init.overloads.forEach(function (overload) {
-                __this.constructors.push(new MethodWrapper(__this, overload));
-            });
-        }
-
-        const pt = hasOwnProperty(handle, "$classWrapper") ? handle.$classWrapper.prototype : handle;
-        Object.getOwnPropertyNames(pt).forEach(function (property) {
-            const value = handle[property];
-            if (!value) {
-                return;
-            }
-            if (hasOwnProperty(value, "argumentTypes")) {
-                value.overloads.forEach(function (overload: Method) {
-                    const wrapper = new MethodWrapper(__this, overload);
-                    if (overload.type == 2) {
-                        if (!(__this.staticMethods.hasOwnProperty(property))) {
-                            __this.staticMethods[property] = [];
-                        }
-                        __this.staticMethods[property].push(wrapper);
-                    } else if (overload.type == 1) {
-                        // pass
-                    } else {
-                        if (property == '$init') {
-                            // pass
-                        } else {
-                            if (!(__this.instanceMethods.hasOwnProperty(property))) {
-                                __this.instanceMethods[property] = [];
-                            }
-                            __this.instanceMethods[property].push(wrapper);
-                        }
-                    }
-                });
-            } else if (hasOwnProperty(value, "fieldReturnType")) {
-                if (value.fieldType == 1) {
-                    __this.staticFields[property] = value;
-                    __this.staticFields[property].toJSON = function () {
-                        return {
-                            name: property,
-                            isStatic: this.fieldType == 1,
-                            type: this.fieldReturnType.className
-                        }
-                    }
-                } else {
-                    __this.instanceFields[property] = value;
-                    __this.instanceFields[property].toJSON = function () {
-                        return {
-                            name: property,
-                            isStatic: this.fieldType == 1,
-                            type: this.fieldReturnType.className
-                        }
-                    }
+        
+        const methods = handle.class.getDeclaredMethods()
+        methods.forEach(function(method : any) {
+            
+            const wrapper = new MethodWrapper(__this,method,false)
+            
+            if (wrapper.isStatic) {
+                if (!(__this.staticMethods.hasOwnProperty(wrapper.name))) {
+                    __this.staticMethods[wrapper.name] = [];
                 }
+                __this.staticMethods[wrapper.name].push(wrapper);
+            } else {
+                if (!(__this.instanceMethods.hasOwnProperty(wrapper.name))) {
+                    __this.instanceMethods[wrapper.name] = [];
+                }
+                __this.instanceMethods[wrapper.name].push(wrapper);
+                
+            }
+            
+        
+        })
+        
+        
+        
+        const jConstructors = handle.class.getDeclaredConstructors()
+        jConstructors.forEach(function(jConstructor: any) {
+            const wrapper = new MethodWrapper(__this,jConstructor,true)
+            __this.constructors.push(wrapper);
+        });
+        
+
+        
+        
+        const fields  = handle.class.getDeclaredFields()
+        fields.forEach(function (field:any) {
+            
+            const wrapper = new FieldWrapper(field)
+            if (wrapper.isStatic) {
+                if (!(__this.staticFields.hasOwnProperty(wrapper.name))) {
+                    __this.staticFields[wrapper.name] = [];
+                }
+                __this.staticFields[wrapper.name].push(wrapper);
+            } else {
+                if (!(__this.instanceFields.hasOwnProperty(wrapper.name))) {
+                    __this.instanceFields[wrapper.name] = [];
+                }
+                __this.instanceFields[wrapper.name].push(wrapper);
+                
             }
         });
-
+       
         // get implemented interfaces
         const _this = this;
         handle.class.getInterfaces().forEach(function (interfaceClass: Wrapper) {
@@ -99,7 +96,7 @@ export class ClassWrapper {
     public static byWrapper(handle: Wrapper) {
         const name = handle.class.getName();
         if (!(name in ClassWrapper.cache)) {
-            ClassWrapper.cache[name] = new ClassWrapper(handle);
+            ClassWrapper.cache[name] = new ClassWrapper(handle);   
         }
         return ClassWrapper.cache[name];
     }
@@ -114,15 +111,41 @@ export class MethodWrapper {
     public isConstructor: Boolean;
     public ownClass: string;
 
-    constructor(own: ClassWrapper, overload: Method) {
+    constructor(own: ClassWrapper, handle : any,isConstructor : Boolean) {
         const _this = this;
         this.ownClass = own.name;
-        this.name = overload.methodName;
-        overload.argumentTypes.forEach(function (t) {
-            _this.arguments.push(t.className);
+        
+        this.name =  handle.getName();
+        
+        handle.getParameterTypes().forEach(function (t : any) {
+            _this.arguments.push(t.getName());
         });
-        this.retType = overload.returnType.className;
-        this.isStatic = overload.type == 2;
-        this.isConstructor = overload.type == 1;
+
+        this.isConstructor = isConstructor;
+        if(!this.isConstructor){
+            this.retType = handle.getReturnType().getName()
+        }else{
+            this.retType = ''
+        }
+        
+        
+        
+        this.isStatic = isStatic(handle)
+       
+        
+        
+    }
+}
+
+export class FieldWrapper {
+    public name: string;
+    public isStatic : Boolean;
+    public type: string;
+
+    
+    constructor(handle : any) {
+        this.isStatic = isStatic(handle)
+        this.name = handle.getName();
+        this.type = handle.getType().getName();
     }
 }
