@@ -106,12 +106,14 @@ class CommandAgent(Agent):
             elif can_preview and _handle is None:
                 _handle = target['name']
             append = ""
+            
             for field in fields:
                 try:
+                    field = field[0]
                     if short_name:
-                        t = DvmDescConverter(field['type']).short_name()
+                        t = DvmDescConverter(field['type']).short_name() 
                     else:
-                        t = DvmDescConverter(field['type']).to_java()
+                        t = DvmDescConverter(field['type']).to_java() 
                     append += '\t'
                     if pretty_print:
                         click.secho("\t", nl=False)
