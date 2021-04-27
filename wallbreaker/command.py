@@ -110,10 +110,8 @@ class CommandAgent(Agent):
             for field in fields:
                 try:
                     field = field[0]
-                    if short_name:
-                        t = DvmDescConverter(field['type']).short_name() 
-                    else:
-                        t = DvmDescConverter(field['type']).to_java() 
+                    t = DvmDescConverter(field['type'])
+                    t = t.short_name() if short_name else t.to_java()
                     append += '\t'
                     if pretty_print:
                         click.secho("\t", nl=False)
@@ -173,8 +171,8 @@ class CommandAgent(Agent):
                     append += "static " if method['isStatic'] else ""
                     if pretty_print:
                         click.secho("static " if method['isStatic'] else "", fg='blue', nl=False)
-                    retType = method['retType']
-                    if short_name: retType = DvmDescConverter(retType).short_name()
+                    retType = DvmDescConverter(method['retType'])
+                    retType = retType.short_name() if short_name else retType.to_java()
                     retType = retType + " " if not method['isConstructor'] else ""
                     append += retType
                     if pretty_print:
