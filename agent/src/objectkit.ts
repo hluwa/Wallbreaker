@@ -7,7 +7,7 @@
 import Wrapper = Java.Wrapper;
 import {getHandle, getOwnProperty, hasOwnProperty} from "./utils";
 
-let handleCache: any = {};
+export let handleCache: any = {};
 
 function getRealClassName(object: Wrapper) {
     const objClass = Java.use("java.lang.Object").getClass.apply(object);
@@ -26,7 +26,10 @@ export const searchHandles = (clazz: string, stop: boolean = false) => {
                 },
                 onMatch: function (instance) {
                     const handle = getHandle(instance);
-                    result[handle] = objectToStr(instance);
+                    if (handle != null) {
+                        result[handle] = objectToStr(instance);
+                    }
+
                     if (stop) {
                         return "stop"
                     }
@@ -85,7 +88,6 @@ export const getObjectFieldValue = (handle: string, field: string) => {
 
             const handle = getHandle(value);
             if (handle != null) {
-                handleCache[handle] = value;
                 value = "[" + handle + "]: " + objectToStr(value).split("\n").join(" \\n ");
             }
         } else {
@@ -134,8 +136,6 @@ export const mapDump = (handle: string) => {
                     continue
                 }
 
-                handleCache[keyHandle] = key;
-                handleCache[valueHandle] = value;
                 result["[" + keyHandle + "]: " + objectToStr(key)] = "[" + valueHandle + "]: " + objectToStr(value);
             }
         } catch (e) {

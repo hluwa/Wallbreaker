@@ -5,6 +5,7 @@
 * */
 
 import Wrapper = Java.Wrapper;
+import {handleCache} from "./objectkit";
 
 export function hasOwnProperty(obj: any, name: string) {
     try {
@@ -39,15 +40,13 @@ export function getOwnProperty(obj: any, name: string) {
 
 export function getHandle(object: Wrapper) {
     object = Java.retain(object);
-    if (hasOwnProperty(object, '$handle')) {
-        if (object.$handle != undefined) {
-            return object.$handle;
-        }
+    if (hasOwnProperty(object, '$handle') && object.$handle != undefined) {
+        handleCache[object.$handle] = object
+        return object.$handle;
     }
-    if (hasOwnProperty(object, '$h')) {
-        if (object.$h != undefined) {
-            return object.$h;
-        }
+    if (hasOwnProperty(object, '$h') && object.$h != undefined) {
+        handleCache[object.$h] = object
+        return object.$h;
     }
     return null;
     //return object.hashCode()
