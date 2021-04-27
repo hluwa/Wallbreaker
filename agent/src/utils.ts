@@ -11,7 +11,7 @@ export function hasOwnProperty(obj: any, name: string) {
     try {
         return obj.hasOwnProperty(name) || name in obj;
     } catch (e) {
-        return obj.hasOwnProperty(name)
+        return false;
     }
 }
 
@@ -39,17 +39,22 @@ export function getOwnProperty(obj: any, name: string) {
 }
 
 export function getHandle(object: Wrapper) {
-    object = Java.retain(object);
-    if (hasOwnProperty(object, '$handle') && object.$handle != undefined) {
-        handleCache[object.$handle] = object
-        return object.$handle;
+    try {
+        object = Java.retain(object);
+        if (hasOwnProperty(object, '$handle') && object.$handle != undefined) {
+            handleCache[object.$handle] = object;
+            return object.$handle;
+        } else if (hasOwnProperty(object, '$h') && object.$h != undefined) {
+            handleCache[object.$h] = object;
+            return object.$h;
+        } else {
+            const hashcode = Java.use("java.lang.Object").hashCode.apply(object);
+            handleCache[hashcode] = object;
+            return hashcode;
+        }
+    } catch (e) {
+        return null;
     }
-    if (hasOwnProperty(object, '$h') && object.$h != undefined) {
-        handleCache[object.$h] = object
-        return object.$h;
-    }
-    return null;
-    //return object.hashCode()
 }
 
 export const isStatic = (obj: any) => (obj.getModifiers() & 0x8) != 0

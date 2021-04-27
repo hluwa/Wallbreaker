@@ -74,28 +74,25 @@ export const getObjectFieldValue = (handle: string, field: string) => {
     let result: string = "null";
     Java.perform(function () {
         const origObject = getObjectByHandle(handle);
-
         let value = getOwnProperty(origObject, field);
         if (value == null) {
             value = getOwnProperty(origObject, "_" + field);
         }
         if (value != null) {
             value = value.value;
-
             if (value == null) {
                 value = "null"
-            }
-
-            const handle = getHandle(value);
-            if (handle != null) {
-                value = "[" + handle + "]: " + objectToStr(value).split("\n").join(" \\n ");
+            } else {
+                const handle = getHandle(value);
+                if (handle != null) {
+                    value = "[" + handle + "]: " + objectToStr(value).split("\n").join(" \\n ");
+                }
             }
         } else {
             value = "null"
         }
         result = value.toString()
     });
-
     return result;
 };
 
