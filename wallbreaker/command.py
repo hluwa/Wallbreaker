@@ -228,7 +228,24 @@ class CommandAgent(Agent):
 
     def object_dump(self, handle, **kwargs):
         handle = str(handle)
+        if self._rpc.instance_of(handle, "java.util.Map"):
+            return self.map_dump(handle, **kwargs)
         return self.class_dump(self.object_get_classname(handle), handle=handle, **kwargs)
+
+    def map_dump(self, handle, pretty_print=False, **kwargs):
+        result = "{"
+        if pretty_print: click.secho("{", fg='red', nl=False)
+        pairs = self._rpc.map_dump(handle)
+        for key in pairs:
+            result += "\n\t{} => {}".format(key, pairs[key])
+            if pretty_print:
+                click.secho("\n\t{}".format(key), fg='blue', nl=False)
+                click.secho(" => ", nl=False)
+                click.secho(pairs[key], fg='bright_cyan', nl=False)
+
+        result += "\n}\n"
+        if pretty_print: click.secho("\n}\n", fg='red', nl=False)
+        return result
 
     def object_get_classname(self, handle):
         return self._rpc.object_get_class(handle)

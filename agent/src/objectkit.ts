@@ -41,7 +41,6 @@ export const getRealClassNameByHandle = (handle: string) => {
     let result: string | null = null;
     Java.perform(function () {
         try {
-
             const obj = Java.use("java.lang.Object");
             const jObject = Java.cast(ptr(handle), obj);
             result = getRealClassName(jObject);
@@ -52,22 +51,26 @@ export const getRealClassNameByHandle = (handle: string) => {
     return result;
 };
 
+const getObjectByHandle = (handle: string) => {
+    if (!hasOwnProperty(handleCache, handle)) {
+        if (handle.startsWith("0x")) {
+            const origClassName = getRealClassNameByHandle(handle);
+            if (!origClassName) {
+                return
+            }
+            handleCache[handle] = Java.cast(ptr(handle), Java.use(origClassName));
+        } else {
+            handleCache[handle] = Java.use(handle)
+        }
+
+    }
+    return handleCache[handle];
+}
+
 export const getObjectFieldValue = (handle: string, field: string) => {
     let result: string = "null";
     Java.perform(function () {
-        if (!hasOwnProperty(handleCache, handle)) {
-            if (handle.startsWith("0x")) {
-                const origClassName = getRealClassNameByHandle(handle);
-                if (!origClassName) {
-                    return
-                }
-                handleCache[handle] = Java.cast(ptr(handle), Java.use(origClassName));
-            } else {
-                handleCache[handle] = Java.use(handle)
-            }
-
-        }
-        const origObject = handleCache[handle];
+        const origObject = getObjectByHandle(handle);
 
         let value = getOwnProperty(origObject, field);
         if (value == null) {
@@ -91,5 +94,53 @@ export const getObjectFieldValue = (handle: string, field: string) => {
         result = value.toString()
     });
 
-    return result
+    return result;
 };
+
+export const instanceOf = (handle: string, className: string) => {
+    let result: boolean = false;
+    Java.perform(function () {
+        try {
+            const targetClass = Java.use(className);
+            const newObject = Java.cast(getObjectByHandle(handle), targetClass);
+            result = !!newObject;
+        } catch (e) {
+            result = false;
+        }
+    })
+    return result;
+};
+
+
+export const mapDump = (handle: string) => {
+    let result: any = {};
+    Java.perform(function () {
+        try {
+            const mapClass = Java.use("java.util.Map");
+            const entryClass = Java.use("java.util.Map$Entry");
+            const mapObject = getObjectByHandle(handle);
+            const entrySet = mapClass.entrySet.apply(mapObject).iterator();
+            while (entrySet.hasNext()) {
+                const entry = Java.cast(entrySet.next(), entryClass);
+                const key = entry.getKey();
+                const keyHandle = getHandle(key);
+                if (key == null || keyHandle == null) {
+                    continue
+                }
+
+                const value = entry.getValue();
+                const valueHandle = getHandle(value);
+                if (value == null || valueHandle == null) {
+                    continue
+                }
+
+                handleCache[keyHandle] = key;
+                handleCache[valueHandle] = value;
+                result["[" + keyHandle + "]: " + objectToStr(key)] = "[" + valueHandle + "]: " + objectToStr(value);
+            }
+        } catch (e) {
+            console.error(e)
+        }
+    })
+    return result;
+}
