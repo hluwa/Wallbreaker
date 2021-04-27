@@ -6,8 +6,6 @@
 
 import Wrapper = Java.Wrapper;
 import {getHandle, getOwnProperty, hasOwnProperty} from "./utils";
-import {ClassWrapper} from "./struct";
-import {use} from "./classkit";
 
 let handleCache: any = {};
 

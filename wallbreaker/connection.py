@@ -2,8 +2,9 @@
 # HomePage: https://github.com/hluwa
 # CreatedTime: 2019/12/7 20:54
 
-import frida
 import logging
+
+import frida
 
 ConnLogger = logging.getLogger("Connection")
 

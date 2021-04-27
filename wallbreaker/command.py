@@ -106,7 +106,7 @@ class CommandAgent(Agent):
             elif can_preview and _handle is None:
                 _handle = target['name']
             append = ""
-            
+
             for field in fields:
                 try:
                     field = field[0]
