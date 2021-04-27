@@ -228,9 +228,9 @@ class CommandAgent(Agent):
 
     def object_dump(self, handle, **kwargs):
         handle = str(handle)
+        result = self.class_dump(self.object_get_classname(handle), handle=handle, **kwargs)
         if self._rpc.instance_of(handle, "java.util.Map"):
-            return self.map_dump(handle, **kwargs)
-        return self.class_dump(self.object_get_classname(handle), handle=handle, **kwargs)
+            result += self.map_dump(handle, **kwargs)
 
     def map_dump(self, handle, pretty_print=False, **kwargs):
         result = "{"
