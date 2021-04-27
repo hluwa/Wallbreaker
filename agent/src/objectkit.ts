@@ -78,7 +78,9 @@ export const getObjectFieldValue = (handle: string, field: string) => {
         if (value == null) {
             value = getOwnProperty(origObject, "_" + field);
         }
-        if (value != null) {
+        if (value == null || value.value == null) {
+            value = "null"
+        } else {
             value = value.value;
             if (value == null) {
                 value = "null"
@@ -88,8 +90,6 @@ export const getObjectFieldValue = (handle: string, field: string) => {
                     value = "[" + handle + "]: " + objectToStr(value).split("\n").join(" \\n ");
                 }
             }
-        } else {
-            value = "null"
         }
         result = value.toString()
     });
