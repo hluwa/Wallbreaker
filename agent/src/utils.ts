@@ -38,6 +38,7 @@ export function getOwnProperty(obj: any, name: string) {
 }
 
 export function getHandle(object: Wrapper) {
+    object = Java.retain(object);
     if (hasOwnProperty(object, '$handle')) {
         if (object.$handle != undefined) {
             return object.$handle;
