@@ -5,7 +5,7 @@
 * */
 
 import Wrapper = Java.Wrapper;
-import {getHandle, getOwnProperty, hasOwnProperty} from "./utils";
+import { getHandle, getOwnProperty, hasOwnProperty } from "./utils";
 
 export let handleCache: any = {};
 
@@ -21,21 +21,21 @@ function objectToStr(object: Wrapper) {
 export const searchHandles = (clazz: string, stop: boolean = false) => {
     let result: any = {};
     Java.perform(function () {
-            Java.choose(clazz, {
-                onComplete: function () {
-                },
-                onMatch: function (instance) {
-                    const handle = getHandle(instance);
-                    if (handle != null) {
-                        result[handle] = objectToStr(instance);
-                    }
+        Java.choose(clazz, {
+            onComplete: function () {
+            },
+            onMatch: function (instance) {
+                const handle = getHandle(instance);
+                if (handle != null) {
+                    result[handle] = objectToStr(instance);
+                }
 
-                    if (stop) {
-                        return "stop"
-                    }
-                },
-            });
-        }
+                if (stop) {
+                    return "stop"
+                }
+            },
+        });
+    }
     );
     return result;
 };
@@ -135,6 +135,24 @@ export const mapDump = (handle: string) => {
 
                 result["[" + keyHandle + "]: " + objectToStr(key)] = "[" + valueHandle + "]: " + objectToStr(value);
             }
+        } catch (e) {
+            console.error(e)
+        }
+    })
+    return result;
+}
+
+export const collectionDump = (handle: string) => {
+    let result:any = [];
+    Java.perform(function () {
+        try {
+            const collectionClass = Java.use("java.util.Collection");
+            const collectionObject = getObjectByHandle(handle);
+            const objectArray = collectionClass.toArray.apply(collectionObject);
+            objectArray.forEach(function (element: any) {
+                const eleHandle = getHandle(element);
+                result.push('[' + eleHandle + ']: ' + objectToStr(element));
+            });
         } catch (e) {
             console.error(e)
         }

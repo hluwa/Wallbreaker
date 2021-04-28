@@ -231,6 +231,8 @@ class CommandAgent(Agent):
         result = self.class_dump(self.object_get_classname(handle), handle=handle, **kwargs)
         if self._rpc.instance_of(handle, "java.util.Map"):
             result += self.map_dump(handle, **kwargs)
+        if self._rpc.instance_of(handle, "java.util.Collection"):
+            result += self.collection_dump(handle, **kwargs)
 
     def map_dump(self, handle, pretty_print=False, **kwargs):
         result = "{"
@@ -242,6 +244,21 @@ class CommandAgent(Agent):
                 click.secho("\n\t{}".format(key), fg='blue', nl=False)
                 click.secho(" => ", nl=False)
                 click.secho(pairs[key], fg='bright_cyan', nl=False)
+
+        result += "\n}\n"
+        if pretty_print: click.secho("\n}\n", fg='red', nl=False)
+        return result
+
+    def collection_dump(self, handle, pretty_print=False, **kwargs):
+        result = "{"
+        if pretty_print: click.secho("{", fg='red', nl=False)
+        array = self._rpc.collection_dump(handle)
+        for i in range(0,len(array)):
+            result += "\n\t{} => {}".format(i,array[i])
+            if pretty_print:
+                click.secho("\n\t{}".format(i), fg='blue', nl=False)
+                click.secho(" => ", nl=False)
+                click.secho(array[i], fg='bright_cyan', nl=False)
 
         result += "\n}\n"
         if pretty_print: click.secho("\n}\n", fg='red', nl=False)
