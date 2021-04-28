@@ -238,7 +238,7 @@ class CommandAgent(Agent):
                 continue
             if "pretty_print" in kwargs and kwargs["pretty_print"]:
                 click.secho("\n/* special type dump - {} */".format(clazz), fg="bright_black")
-            result += self.map_dump(handle, **kwargs)
+            result += special_render[clazz](handle, **kwargs)
             # break
         return result
 
