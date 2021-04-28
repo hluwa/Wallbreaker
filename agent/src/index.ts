@@ -4,7 +4,7 @@
 * CreateTime: 2019/12/4
 * */
 import {match, use} from "./classkit";
-import {getObjectFieldValue, getRealClassNameByHandle, instanceOf, mapDump, searchHandles} from "./objectkit";
+import {getObjectFieldValue, getRealClassNameByHandle, instanceOf, mapDump, collectionDump,searchHandles} from "./objectkit";
 
 rpc.exports = {
     classMatch: function (name: string) {
@@ -28,5 +28,8 @@ rpc.exports = {
     },
     mapDump: function (handle: string) {
         return mapDump(handle);
+    },
+    collectionDump: function (handle: string) {
+        return collectionDump(handle);
     }
 };
