@@ -5,7 +5,7 @@
 * */
 
 import Wrapper = Java.Wrapper;
-import { getHandle, getOwnProperty, hasOwnProperty } from "./utils";
+import {getHandle, getOwnProperty, hasOwnProperty} from "./utils";
 
 export let handleCache: any = {};
 
@@ -20,11 +20,11 @@ function objectToStr(object: Wrapper) {
 
 export const searchHandles = (clazz: string, stop: boolean = false) => {
     let result: any = {};
-    Java.perform(function () {
+    const f = () => {
         Java.choose(clazz, {
-            onComplete: function () {
+            onComplete: () => {
             },
-            onMatch: function (instance) {
+            onMatch: (instance) => {
                 const handle = getHandle(instance);
                 if (handle != null) {
                     result[handle] = objectToStr(instance);
@@ -36,7 +36,7 @@ export const searchHandles = (clazz: string, stop: boolean = false) => {
             },
         });
     }
-    );
+    Java.perform(f);
     return result;
 };
 
@@ -143,7 +143,7 @@ export const mapDump = (handle: string) => {
 }
 
 export const collectionDump = (handle: string) => {
-    let result:any = [];
+    let result: any = [];
     Java.perform(function () {
         try {
             const collectionClass = Java.use("java.util.Collection");

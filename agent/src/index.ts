@@ -4,7 +4,14 @@
 * CreateTime: 2019/12/4
 * */
 import {match, use} from "./classkit";
-import {getObjectFieldValue, getRealClassNameByHandle, instanceOf, mapDump, collectionDump,searchHandles} from "./objectkit";
+import {
+    collectionDump,
+    getObjectFieldValue,
+    getRealClassNameByHandle,
+    instanceOf,
+    mapDump,
+    searchHandles
+} from "./objectkit";
 
 rpc.exports = {
     classMatch: function (name: string) {
