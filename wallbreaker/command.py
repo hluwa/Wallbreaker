@@ -227,16 +227,26 @@ class CommandAgent(Agent):
         return self._rpc.object_search(clazz, stop)
 
     def object_dump(self, handle, **kwargs):
+        special_render = {
+            "java.util.Map": self.map_dump,
+            "java.util.Collection": self.collection_dump
+        }
         handle = str(handle)
         result = self.class_dump(self.object_get_classname(handle), handle=handle, **kwargs)
-        if self._rpc.instance_of(handle, "java.util.Map"):
+        for clazz in special_render:
+            if not self._rpc.instance_of(handle, clazz):
+                continue
+            if "pretty_print" in kwargs and kwargs["pretty_print"]:
+                click.secho("\n/* special type dump - {} */".format(clazz), fg="bright_black")
             result += self.map_dump(handle, **kwargs)
-        if self._rpc.instance_of(handle, "java.util.Collection"):
-            result += self.collection_dump(handle, **kwargs)
+            # break
+        return result
 
     def map_dump(self, handle, pretty_print=False, **kwargs):
-        result = "{"
-        if pretty_print: click.secho("{", fg='red', nl=False)
+        result = "{}'s Map Entries {{".format(handle)
+        if pretty_print:
+            click.secho("{}'s Map Entries ".format(handle), fg='blue', nl=False)
+            click.secho("{", fg='red', nl=False)
         pairs = self._rpc.map_dump(handle)
         for key in pairs:
             result += "\n\t{} => {}".format(key, pairs[key])
@@ -250,11 +260,13 @@ class CommandAgent(Agent):
         return result
 
     def collection_dump(self, handle, pretty_print=False, **kwargs):
-        result = "{"
-        if pretty_print: click.secho("{", fg='red', nl=False)
+        result = "{}'s Collection Entries {{".format(handle)
+        if pretty_print:
+            click.secho("{}'s Collection Entries ".format(handle), fg='blue', nl=False)
+            click.secho("{", fg='red', nl=False)
         array = self._rpc.collection_dump(handle)
-        for i in range(0,len(array)):
-            result += "\n\t{} => {}".format(i,array[i])
+        for i in range(0, len(array)):
+            result += "\n\t{} => {}".format(i, array[i])
             if pretty_print:
                 click.secho("\n\t{}".format(i), fg='blue', nl=False)
                 click.secho(" => ", nl=False)
