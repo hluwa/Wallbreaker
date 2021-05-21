@@ -1,38 +1,77 @@
 # Wallbreaker
 
-help to understand java memory world.
+🔨 Break Java Reverse Engineering form Memory World!
 
-## What?
+## WTF?
 
-Wallbreaker is a tool based on [Frida](https://frida.re) to help analyze android memory. Now, you can run it
-in [objection](https://github.com/sensepost/objection) or interactive python(ipython).
+Wallbreaker is a useful tool to live analyzing Java heap, powered by [frida](https://github.com/frida/frida).
+Provider some commands to search object or class from the memory, and beautifully visualize the real structure of the target.
 
-## Features
+Want to know real data content? list item? map entries?
+Want to know about implementation of the interface?
+Try it! What you see is what you get!
 
-1. ClassSearch: search class by pattern.
-2. ClassDump: quick view class structure.
-3. ObjectSearch: search instance by class.
-4. ObjectDump: quick view the internal data of an instance.
-5. ......
+## How to start?
 
-## Usage
+### 1. Install objection
 
-### objection
+> pip3 install objection
 
-1. clone this repo to your plugins folder, eg:
-   > git clone https://github.com/hluwa/Wallbreaker ~/.objection/plugins/Wallbreaker
-2. start objection with `-P` or `--plugin-folder` your plugins folder, eg:
-   > objection -g com.app.name explore -P ~/.objection/plugins
-3. run command:
-    1. ` plugin wallbreaker classsearch <pattern>`
-    2. ` plugin wallbreaker classdump <classname> [--fullname]`
-    3. ` plugin wallbreaker objectsearch <classname>`
-    4. ` plugin wallbreaker objectdump <handle> [--fullname]`
+### 2. Download wallbreaker
 
-#### demo video
+> mkdir -p ~/.objection/plugins/
+> git clone https://github.com/hluwa/Wallbreaker ~/.objection/plugins/Wallbreaker
+
+### 3. Loading as objection plugin
+
+> objection -g com.app.name explore -P ~/.objection/plugins
+
+or
+
+> objection -g com.app.name explore \
+> plugin load  ~/.objection/plugins/Wallbreaker
+
+### 4. Use wallbreaker command
+
+> plugin wallbreaker objectsearch java.util.HashMap \
+> plugin wallbreaker objectdump <object-handle>
+
+## Commands
+
+### Search
+
+
+> wallbreaker classsearch <type-pattern> 
+```
+[return all matched class]
+```
+
+> wallbreaker objectsearch <instance-class-name> 
+```
+[return all matched object-handle and toString]
+```
+
+### Dump
+
+> wallbreaker classdump <class-name> [--fullname]
+```
+[
+   pretty print class structure: fields declare, static field value, methods declare.
+      set --fullname to display package name of type name.
+]
+```
+
+
+> wallbreaker objectdump <object-handle> [--fullname] [--as-class class-name]
+```
+[
+   pretty print object structure: fields declare and value, methods declare.
+      set --fullname to display package name of type name;
+      set --as-class to cast instance type(super class, not interface).
+   if instance is a collection or map, dump all entries.
+]
+```
+
+## Demo
 
 [![asciicast](https://asciinema.org/a/XZf8yLWJylCKJfcaYzcKlNbIy.svg)](https://asciinema.org/a/XZf8yLWJylCKJfcaYzcKlNbIy)
-
-### ipython
-
-...
