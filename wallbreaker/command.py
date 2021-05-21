@@ -226,13 +226,14 @@ class CommandAgent(Agent):
     def object_search(self, clazz, stop=False):
         return self._rpc.object_search(clazz, stop)
 
-    def object_dump(self, handle, **kwargs):
+    def object_dump(self, handle, as_class=None, **kwargs):
         special_render = {
             "java.util.Map": self.map_dump,
             "java.util.Collection": self.collection_dump
         }
         handle = str(handle)
-        result = self.class_dump(self.object_get_classname(handle), handle=handle, **kwargs)
+        if as_class is None: as_class = self.object_get_classname(handle)
+        result = self.class_dump(as_class, handle=handle, **kwargs)
         for clazz in special_render:
             if not self._rpc.instance_of(handle, clazz):
                 continue

@@ -45,7 +45,7 @@ class WallBreaker(Plugin):
                 },
                 'objectdump': {
                     'meta': 'quick view an object internal',
-                    'flags': ['--fullname'],
+                    'flags': ['--fullname', "--as-class"],
                     'exec': self.objectdump
                 },
                 'objectsearch': {
@@ -84,13 +84,17 @@ class WallBreaker(Plugin):
         """
         """
         short_name = True
+        as_class = None
         handle = ""
-        for arg in args:
+        for idx in range(len(args)):
+            arg = args[idx]
             if arg == "--fullname":
                 short_name = False
+            elif arg == "--as-class":
+                as_class = args[idx + 1]
             else:
                 handle = arg
-        self.plugin_agent.object_dump(handle, pretty_print=True, short_name=short_name)
+        self.plugin_agent.object_dump(handle, as_class=as_class, pretty_print=True, short_name=short_name)
 
     def objectsearch(self, args=None):
         clsname = args[0]
