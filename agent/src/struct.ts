@@ -34,7 +34,7 @@ export class ClassWrapper {
         const __this = this;
 
 
-        const methods = handle.class.getMethods()
+        const methods = handle.class.getDeclaredMethods()
         methods.forEach(function (method: any) {
 
             const wrapper = new MethodWrapper(__this, method, false)
@@ -56,14 +56,14 @@ export class ClassWrapper {
         })
 
 
-        const jConstructors = handle.class.getConstructors()
+        const jConstructors = handle.class.getDeclaredConstructors()
         jConstructors.forEach(function (jConstructor: any) {
             const wrapper = new MethodWrapper(__this, jConstructor, true)
             __this.constructors.push(wrapper);
         });
 
 
-        const fields = handle.class.getFields()
+        const fields = handle.class.getDeclaredFields()
         fields.forEach(function (field: any) {
 
             const wrapper = new FieldWrapper(field)
