@@ -41,19 +41,32 @@ or
 ### Search
 
 
-> wallbreaker classsearch <type-pattern> 
+<details>
+
+<summary><b> wallbreaker classsearch &lt;type-pattern&gt; </b></summary>
+
 ```
 [return all matched class]
 ```
 
-> wallbreaker objectsearch <instance-class-name> 
+</details>
+
+<details>
+
+<summary><b> wallbreaker objectsearch &lt;instance-class-name&gt;  </b></summary>
+
 ```
 [return all matched object-handle and toString]
 ```
 
+</details>
+
 ### Dump
 
-> wallbreaker classdump <class-name> [--fullname]
+<details>
+
+<summary><b> wallbreaker classdump &lt;class-name&gt; [--fullname] </b></summary>
+
 ```
 [
    pretty print class structure: fields declare, static field value, methods declare.
@@ -61,8 +74,12 @@ or
 ]
 ```
 
+</details>
 
-> wallbreaker objectdump <object-handle> [--fullname] [--as-class class-name]
+<details>
+   
+<summary><b> wallbreaker objectdump &lt;object-handle&gt; [--fullname] [--as-class class-name] </b></summary>
+   
 ```
 [
    pretty print object structure: fields declare and value, methods declare.
@@ -71,6 +88,7 @@ or
    if instance is a collection or map, dump all entries.
 ]
 ```
+</details>
 
 ## Demo
 
