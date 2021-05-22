@@ -19,7 +19,7 @@ Try it! What you see is what you get!
 
 ### 2. Download wallbreaker
 
-> mkdir -p ~/.objection/plugins/
+> mkdir -p ~/.objection/plugins/ \
 > git clone https://github.com/hluwa/Wallbreaker ~/.objection/plugins/Wallbreaker
 
 ### 3. Loading as objection plugin
@@ -34,7 +34,7 @@ or
 ### 4. Use wallbreaker command
 
 > plugin wallbreaker objectsearch java.util.HashMap \
-> plugin wallbreaker objectdump <object-handle>
+> plugin wallbreaker objectdump &lt;object-handle&gt;
 
 ## Commands
 
