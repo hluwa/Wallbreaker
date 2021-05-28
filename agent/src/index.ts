@@ -27,8 +27,8 @@ rpc.exports = {
     objectGetClass: function (handle: string) {
         return getRealClassNameByHandle(handle);
     },
-    objectGetField: function (handle: string, field: string) {
-        return getObjectFieldValue(handle, field);
+    objectGetField: function (handle: string, field: string, clazz: string) {
+        return getObjectFieldValue(handle, field, clazz);
     },
     instanceOf: function (handle: string, className: string) {
         return instanceOf(handle, className);

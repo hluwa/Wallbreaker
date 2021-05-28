@@ -106,7 +106,7 @@ class CommandAgent(Agent):
             elif can_preview and _handle is None:
                 _handle = target['name']
             append = ""
-
+            original_class = None if handle is None else self.object_get_classname(handle)
             for field in fields:
                 try:
                     field = field[0]
@@ -124,7 +124,9 @@ class CommandAgent(Agent):
 
                     value = None
                     if can_preview:
-                        value = self.object_get_field(_handle, field['name'])
+                        value = self.object_get_field(handle=_handle,
+                                                      field=field['name'],
+                                                      as_class=name if original_class and original_class != name else None)
                     append += '{};{}\n'.format(field["name"], " => {}".format(value) if value is not None else "")
                     if pretty_print:
                         click.secho(field['name'], fg='red', nl=False)
@@ -280,5 +282,5 @@ class CommandAgent(Agent):
     def object_get_classname(self, handle):
         return self._rpc.object_get_class(handle)
 
-    def object_get_field(self, handle, field):
-        return self._rpc.object_get_field(handle, field)
+    def object_get_field(self, handle, field, as_class=None):
+        return self._rpc.object_get_field(handle, field, as_class)

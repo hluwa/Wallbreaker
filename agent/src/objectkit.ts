@@ -15,7 +15,11 @@ function getRealClassName(object: Wrapper) {
 }
 
 function objectToStr(object: Wrapper) {
-    return Java.use("java.lang.Object").toString.apply(object);
+    try {
+        return Java.use("java.lang.Object").toString.apply(object);
+    } catch (e) {
+        return "" + object;
+    }
 }
 
 export const searchHandles = (clazz: string, stop: boolean = false) => {
@@ -70,13 +74,17 @@ const getObjectByHandle = (handle: string) => {
     return handleCache[handle];
 }
 
-export const getObjectFieldValue = (handle: string, field: string) => {
+export const getObjectFieldValue = (handle: string, field: string, clazz: string) => {
     let result: string = "null";
     Java.perform(function () {
-        const origObject = getObjectByHandle(handle);
-        let value = getOwnProperty(origObject, field);
+        let origObject = getObjectByHandle(handle);
+        if (clazz) {
+            origObject = Java.cast(origObject, Java.use(clazz))
+        }
+
+        let value = getOwnProperty(origObject, "_" + field);
         if (value == null) {
-            value = getOwnProperty(origObject, "_" + field);
+            value = getOwnProperty(origObject, field);
         }
         if (value == null || value.value == null) {
             value = "null"
@@ -87,6 +95,7 @@ export const getObjectFieldValue = (handle: string, field: string) => {
             } else {
                 const handle = getHandle(value);
                 if (handle != null) {
+                    console.log(field + " => " + value)
                     value = "[" + handle + "]: " + objectToStr(value).split("\n").join(" \\n ");
                 }
             }
