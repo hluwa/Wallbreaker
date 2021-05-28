@@ -5,7 +5,7 @@
 ## WTF?
 
 Wallbreaker is a useful tool to live analyzing Java heap, powered by [frida](https://github.com/frida/frida).
-Provider some commands to search object or class from the memory, and beautifully visualize the real structure of the target.
+Provide some commands to search object or class from the memory, and beautifully visualize the real structure of the target.
 
 Want to know real data content? list item? map entries?
 Want to know about implementation of the interface?
@@ -19,7 +19,7 @@ Try it! What you see is what you get!
 
 ### 2. Download wallbreaker
 
-> mkdir -p ~/.objection/plugins/
+> mkdir -p ~/.objection/plugins/ \
 > git clone https://github.com/hluwa/Wallbreaker ~/.objection/plugins/Wallbreaker
 
 ### 3. Loading as objection plugin
@@ -34,7 +34,7 @@ or
 ### 4. Use wallbreaker command
 
 > plugin wallbreaker objectsearch java.util.HashMap \
-> plugin wallbreaker objectdump <object-handle>
+> plugin wallbreaker objectdump &lt;object-handle&gt;
 
 ## Commands
 
