@@ -121,12 +121,12 @@ class CommandAgent(Agent):
                     append += "static " if method['isStatic'] else ""
                     if pretty_print:
                         click.secho("static " if method['isStatic'] else "", fg='blue', nl=False)
-                    retType = DvmDescConverter(method['retType'])
-                    retType = retType.short_name() if short_name else retType.to_java()
-                    retType = retType + " " if not method['isConstructor'] else ""
-                    append += retType
+                    ret_type = DvmDescConverter(method['retType'])
+                    ret_type = ret_type.short_name() if short_name else ret_type.to_java()
+                    ret_type = ret_type + " " if not method['isConstructor'] else ""
+                    append += ret_type
                     if pretty_print:
-                        click.secho(retType, fg='blue', nl=False)
+                        click.secho(ret_type, fg='blue', nl=False)
                     append += method['name'] + '('
                     if pretty_print:
                         click.secho(method['name'], fg='red', nl=False)

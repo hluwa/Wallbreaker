@@ -6,7 +6,7 @@ import traceback
 
 import frida
 
-from wallbreaker.command import Agent
+from wallbreaker.agent.command import Agent
 from wallbreaker.connection import create_connection
 
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(asctime)s <%(funcName)s> - %(message)s")
