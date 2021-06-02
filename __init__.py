@@ -8,7 +8,7 @@ import os
 
 from objection.utils.plugin import Plugin
 
-from .wallbreaker.command import CommandAgent
+from .wallbreaker.agent.command import CommandAgent
 
 
 class ObjectionAgent(CommandAgent):

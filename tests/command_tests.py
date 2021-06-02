@@ -4,7 +4,7 @@
 import logging
 import traceback
 
-from wallbreaker.command import CommandAgent
+from wallbreaker.agent.command import CommandAgent
 from wallbreaker.connection import create_connection
 
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(asctime)s <%(funcName)s> - %(message)s")
