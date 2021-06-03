@@ -4,12 +4,11 @@
 
 ## WTF?
 
-Wallbreaker is a useful tool to live analyzing Java heap, powered by [frida](https://github.com/frida/frida).
-Provide some commands to search object or class from the memory, and beautifully visualize the real structure of the target.
+Wallbreaker is a useful tool to live analyzing Java heap, powered by [frida](https://github.com/frida/frida). Provide
+some commands to search object or class from the memory, and beautifully visualize the real structure of the target.
 
-Want to know real data content? list item? map entries?
-Want to know about implementation of the interface?
-Try it! What you see is what you get!
+Want to know real data content? list item? map entries? Want to know about implementation of the interface? Try it! What
+you see is what you get!
 
 ## How to start?
 
@@ -39,7 +38,6 @@ or
 ## Commands
 
 ### Search
-
 
 <details>
 
@@ -77,9 +75,9 @@ or
 </details>
 
 <details>
-   
+
 <summary><b> wallbreaker objectdump &lt;object-handle&gt; [--fullname] [--as-class class-name] </b></summary>
-   
+
 ```
 [
    pretty print object structure: fields declare and value, methods declare.
@@ -88,6 +86,7 @@ or
    if instance is a collection or map, dump all entries.
 ]
 ```
+
 </details>
 
 ## Demo
