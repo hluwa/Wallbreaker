@@ -13,7 +13,7 @@ from ...utils import DvmDescConverter
 class CommandAgent(Agent):
 
     def __init__(self, connection=None):
-        super().__init__(connection=connection, script_file=os.path.join(os.path.basename(__file__), "agent.js"))
+        super().__init__(connection=connection, script_file=os.path.join(os.path.dirname(__file__), "agent.js"))
 
     def on_message(self, message, data):
         if message['type'] == 'send':
