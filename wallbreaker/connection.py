@@ -63,6 +63,7 @@ def create_connection(p_name=None, p_id=None, device=None, spawn=False):
 
     return Connection(device, p_id)
 
+
 class SessionConnection(Connection):
 
     def __init__(self, device, session):
