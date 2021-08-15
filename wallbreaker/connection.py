@@ -62,3 +62,10 @@ def create_connection(p_name=None, p_id=None, device=None, spawn=False):
     assert p_id, "Please give name or id of target process."
 
     return Connection(device, p_id)
+
+class SessionConnection(Connection):
+
+    def __init__(self, device, session):
+        self.device = device
+        self.session = session
+        self.process = str(self.session)
