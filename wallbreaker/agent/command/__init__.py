@@ -27,6 +27,9 @@ class CommandAgent(Agent):
     def class_use(self, name):
         return json.loads(self._rpc.class_use(name))
 
+    def is_ascii(self,s):
+        return all(ord(c) < 128 for c in s)
+
     def class_dump(self, name, handle=None, pretty_print=False, short_name=True):
         target = self.class_use(name)
         result = ""
@@ -75,6 +78,8 @@ class CommandAgent(Agent):
                         value = self.object_get_field(handle=_handle,
                                                       field=field['name'],
                                                       as_class=name if original_class and original_class != name else None)
+                    if not self.is_ascii(field["name"]):
+                        field["name"] = str(field["name"].encode("unicode-escape"))
                     append += '{};{}\n'.format(field["name"], " => {}".format(value) if value is not None else "")
                     if pretty_print:
                         click.secho(field['name'], fg='red', nl=False)
@@ -124,9 +129,13 @@ class CommandAgent(Agent):
                     ret_type = DvmDescConverter(method['retType'])
                     ret_type = ret_type.short_name() if short_name else ret_type.to_java()
                     ret_type = ret_type + " " if not method['isConstructor'] else ""
+                    if not self.is_ascii(ret_type):
+                        ret_type = str(ret_type.encode("unicode-escape"))
                     append += ret_type
                     if pretty_print:
                         click.secho(ret_type, fg='blue', nl=False)
+                    if not self.is_ascii(method['name']):
+                        method['name'] = str(method['name'].encode("unicode-escape"))
                     append += method['name'] + '('
                     if pretty_print:
                         click.secho(method['name'], fg='red', nl=False)
