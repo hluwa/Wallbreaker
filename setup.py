@@ -9,7 +9,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="wallbreaker",
-    version="1.0.2",
+    version="1.0.3",
     description="🔨 Break Java Reverse Engineering form Memory World!",
     long_description=long_description,
     long_description_content_type="text/markdown",
