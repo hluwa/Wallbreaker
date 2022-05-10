@@ -80,28 +80,22 @@ export const getObjectFieldValue = (handle: string, field: string, clazz: string
             let rField = rClass.class.getDeclaredField(field);
             rField.setAccessible(true);
             value = rField.get(origObject);
-            if (value) {
-                value = Java.retain(value);
-            }
         } else {
             value = getOwnProperty(origObject, "_" + field);
             if (value == null) {
                 value = getOwnProperty(origObject, field);
             }
-            if (value == null || value.value == null) {
-                value = "null"
-            } else {
-                value = value.value;
-                if (value == null) {
-                    value = "null"
-                } else {
-                    const handle = getHandle(value);
-                    if (handle != null) {
-                        value = "[" + handle + "]: " + objectToStr(value).split("\n").join(" \\n ");
-                    }
-                }
+            value = (value && hasOwnProperty(value, "value")) ? value.value : null;
+        }
+        if (value == null){
+            value = "null";
+        } else {
+            const fieldHandle = getHandle(value);
+            if (fieldHandle != null) {
+                value = "[" + fieldHandle + "]: " + objectToStr(value).split("\n").join(" \\n ");
             }
         }
+
         result = value.toString()
     });
     return result;
