@@ -86,14 +86,18 @@ class WallBreaker(Plugin):
         short_name = True
         as_class = None
         handle = ""
-        for idx in range(len(args)):
+        idx = 0
+        while idx < len(args):
             arg = args[idx]
             if arg == "--fullname":
                 short_name = False
             elif arg == "--as-class":
                 as_class = args[idx + 1]
+                idx += 1
             else:
                 handle = arg
+            idx += 1
+
         self.plugin_agent.object_dump(handle, as_class=as_class, pretty_print=True, short_name=short_name)
 
     def objectsearch(self, args=None):

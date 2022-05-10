@@ -47,13 +47,9 @@ export const searchHandles = (clazz: string, stop: boolean = false) => {
 export const getRealClassNameByHandle = (handle: string) => {
     let result: string | null = null;
     Java.perform(function () {
-        try {
-            const obj = Java.use("java.lang.Object");
-            const jObject = Java.cast(ptr(handle), obj);
-            result = getRealClassName(jObject);
-        } catch (e) {
-
-        }
+        const obj = Java.use("java.lang.Object");
+        const jObject = Java.cast(ptr(handle), obj);
+        result = getRealClassName(jObject);
     });
     return result;
 };
@@ -78,25 +74,31 @@ export const getObjectFieldValue = (handle: string, field: string, clazz: string
     let result: string = "null";
     Java.perform(function () {
         let origObject = getObjectByHandle(handle);
+        let value;
         if (clazz) {
-            origObject = Java.cast(origObject, Java.use(clazz))
-        }
-
-        let value = getOwnProperty(origObject, "_" + field);
-        if (value == null) {
-            value = getOwnProperty(origObject, field);
-        }
-        if (value == null || value.value == null) {
-            value = "null"
+            let rClass = Java.use(clazz);
+            let rField = rClass.class.getDeclaredField(field);
+            rField.setAccessible(true);
+            value = rField.get(origObject);
+            if (value) {
+                value = Java.retain(value);
+            }
         } else {
-            value = value.value;
+            value = getOwnProperty(origObject, "_" + field);
             if (value == null) {
+                value = getOwnProperty(origObject, field);
+            }
+            if (value == null || value.value == null) {
                 value = "null"
             } else {
-                const handle = getHandle(value);
-                if (handle != null) {
-                    console.log(field + " => " + value)
-                    value = "[" + handle + "]: " + objectToStr(value).split("\n").join(" \\n ");
+                value = value.value;
+                if (value == null) {
+                    value = "null"
+                } else {
+                    const handle = getHandle(value);
+                    if (handle != null) {
+                        value = "[" + handle + "]: " + objectToStr(value).split("\n").join(" \\n ");
+                    }
                 }
             }
         }
